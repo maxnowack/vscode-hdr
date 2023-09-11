@@ -171,9 +171,14 @@ export function activate(context: vscode.ExtensionContext) {
     "hdr.uninstallPlugin",
     cmdUninstall
   );
+  const toggle = vscode.commands.registerCommand(
+    "hdr.toggle",
+    toggleEnabled
+  );
 
   context.subscriptions.push(installPlugin);
   context.subscriptions.push(uninstallPlugin);
+  context.subscriptions.push(toggle);
 
   console.log("vscode-hdr is active!");
   console.log("Application directory", appDir);

@@ -14,6 +14,10 @@
   "contributes": {
     "commands": [
       {
+        "command": "hdr.toggle",
+        "title": "HDR: Toggle"
+      },
+      {
         "command": "hdr.installPlugin",
         "title": "HDR: Install"
       },
@@ -21,7 +25,16 @@
         "command": "hdr.uninstallPlugin",
         "title": "HDR: Uninstall"
       }
-    ]
+    ],
+    "configuration": {
+      "title": "HDR",
+      "properties": {
+        "hdr.enable": {
+          "description": "Enable HDR mode",
+          "type": "boolean"
+        }
+      }
+    }
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",
