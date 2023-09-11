@@ -16,7 +16,7 @@ function enable() {
   videoElement.style.bottom = '0';
   videoElement.style.left = '0';
   videoElement.style.width = '100%';
-  videoElement.style.height = '100%';
+  videoElement.style.height = 'calc(100% - 1px)'; // threre is a weird 1px line at the bottom which can be fixed by setting the height to 100% - 1px
   videoElement.style.objectFit = 'fill';
   videoElement.style.zIndex = '10000';
   videoElement.style.mixBlendMode = 'multiply';
