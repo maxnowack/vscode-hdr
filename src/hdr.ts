@@ -27,4 +27,68 @@ function enable() {
   document.body.appendChild(videoElement);
 }
 
-enable();
+function disable() {
+  const videoElement = document.getElementById('hdr-video-overlay');
+  if (videoElement) {
+    videoElement.remove();
+  }
+}
+
+const settingsIdentifier = [
+  4,
+  2,
+  6,
+  201,
+  1,
+  6,
+  // 228,
+  // 8,
+  // 3,
+  // 155,
+  // 48,
+  // 123,
+];
+
+// @ts-ignore
+const vscodeAny = vscode as any;
+vscodeAny.ipcRenderer.on('vscode:message', (_: any, data: Buffer) => {
+  // const isConfig = settingsIdentifier.every((byte, index) => {
+  //   console.log({ index, byte, data: data[index] });
+  //   return byte === data[index];
+  // });
+  // console.log({ isConfig, settingsIdentifier });
+  const string = new TextDecoder().decode(data);
+  // if (isConfig) {
+  // console.log('CONFIG', {isConfig, data, string});
+  // }
+  if (!string.includes('{')) {
+    return;
+  }
+  const parsableMessage = string.slice(string.indexOf('{'), string.lastIndexOf('}') + 1)
+    // 1) replace "/" in quotes with non-printable ASCII '\1' char
+    .replace(/("([^\\"]|\\")*")|('([^\\']|\\')*')/g, (m) => m.replace(/\//g, '\x01'))
+    
+    // 2) clear comments
+    .replace(/(\/\*[^*]+\*\/)|(\/\/[^\n]+)/g, '')
+    
+    // 3) restore "/" in quotes
+    .replace(/\1/g, '/');
+  try {
+    const parsedMessage = JSON.parse(parsableMessage);
+    console.log('PARSED', parsedMessage);
+    if (!Object.prototype.hasOwnProperty.call(parsedMessage, 'hdr.enable')) {
+      return;
+    }
+    if (parsedMessage['hdr.enable']) {
+      console.log('enabling');
+      enable();
+    } else {
+      console.log('disabling');
+      disable();
+    }
+  } catch (err) {
+    console.log('error parsing message', err);
+    console.log('ERR MSG', parsableMessage, string.slice(string.indexOf('{'), string.lastIndexOf('}') + 1));
+    return;
+  }
+});
